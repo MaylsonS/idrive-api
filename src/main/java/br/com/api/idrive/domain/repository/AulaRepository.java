@@ -1,0 +1,9 @@
+package br.com.api.idrive.domain.repository;
+
+import br.com.api.idrive.domain.model.Aula;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface AulaRepository extends JpaRepository<Aula,Long> {
+}
