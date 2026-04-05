@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Getter @Setter
 @NoArgsConstructor
@@ -13,16 +14,16 @@ import java.time.LocalDateTime;
 public class Aula {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
-    @Column(nullable = false,length = 25)
+    @Column(nullable = false)
     LocalDateTime inicio;
 
-    @Column(nullable = false,length = 25)
+    @Column(nullable = false)
     LocalDateTime fim;
 
-    @Column(unique = true, nullable = false,length = 15)
+    @Column(unique = false)
     Double valor;
 
     @ManyToOne
