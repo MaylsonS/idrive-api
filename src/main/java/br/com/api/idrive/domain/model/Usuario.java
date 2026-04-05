@@ -1,36 +1,36 @@
 package br.com.api.idrive.domain.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@lombok
-@Getter
-@Setter
-@MappedSuperclass // não cria uma tabela pessoa mas coloca os campos dele nas outras classes aluno e instrutor
-@NoArgsConstructor // construtor vazio
-@AllArgsConstructor // construtor completo
-public abstract class Pessoa {
+@Getter @Setter
+@NoArgsConstructor
+@Entity
+@Table(name = "usuarios")
+public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
 
     @Column(nullable = false, length = 150)
-    String nome;
+    private String nome;
 
     @Column(nullable = false, length = 11, unique = true)
-    String cpf;
+    private String cpf;
 
     @Column(nullable = false, length = 100, unique = true)
-    String email;
+    private String email;
 
     @Column(nullable = false)
-    String senha;
+    private String senha;
 
     @Column(nullable = false, length = 15, unique = true)
-    String telefone;
+    private String telefone;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private TipoPerfil tipoPerfil;
 }

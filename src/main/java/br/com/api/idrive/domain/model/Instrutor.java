@@ -1,9 +1,6 @@
 package br.com.api.idrive.domain.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,24 +8,26 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
 
-@lombok
 @Getter @Setter
 @NoArgsConstructor
 @Entity
-public class Instrutor extends Pessoa{
+@Table(name = "instrutores")
+public class Instrutor {
 
-    @Column(unique = true, nullable = false, length = 150)
-    String formacao;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @Column(unique = true, nullable = false, length = 50)
-    String titulacao;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "usuario_id", referencedColumnName = "id", nullable = false)
+    private Usuario usuario;
 
-    @ManyToMany(mappedBy = "instrutor")
+    @Column(nullable = false, unique = true, length = 11)
+    private String cnh;
+
+    @ManyToMany(mappedBy = "instrutores")
     private List<Aluno> alunos = new ArrayList<>();
 
     @OneToMany(mappedBy = "instrutor")
     private List<Aula> aulas = new ArrayList<>();
-
-
-
 }
