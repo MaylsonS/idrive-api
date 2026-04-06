@@ -39,7 +39,6 @@ public class UsuarioService {
         return userRepository.save(usuario);
     }
 
-    // Atualize o método listarTodos no UsuarioService
     public List<UsuarioResponseDTO> listarTodos() {
         return userRepository.findAll()
                 .stream()
