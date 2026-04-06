@@ -3,10 +3,9 @@ package br.com.api.idrive.domain.service;
 import br.com.api.idrive.domain.dto.InstrutorRegistroDTO;
 import br.com.api.idrive.domain.dto.InstrutorResponseDTO;
 import br.com.api.idrive.domain.model.Instrutor;
-import br.com.api.idrive.domain.model.TipoPerfil;
-import br.com.api.idrive.domain.model.Usuario;
 import br.com.api.idrive.domain.repository.InstrutorRepository;
 import br.com.api.idrive.domain.repository.UsuarioRepository;
+import br.com.api.idrive.mapper.InstrutorMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,10 +16,12 @@ public class InstrutorService {
 
     private final InstrutorRepository instrutorRepository;
     private final UsuarioRepository usuarioRepository;
+    private final InstrutorMapper instrutorMapper;
 
-    public InstrutorService(InstrutorRepository instrutorRepository, UsuarioRepository usuarioRepository) {
+    public InstrutorService(InstrutorRepository instrutorRepository, UsuarioRepository usuarioRepository, InstrutorMapper instrutorMapper) {
         this.instrutorRepository = instrutorRepository;
         this.usuarioRepository = usuarioRepository;
+        this.instrutorMapper = instrutorMapper;
     }
 
     @Transactional
@@ -32,17 +33,7 @@ public class InstrutorService {
             throw new IllegalArgumentException("Este e-mail já está em uso.");
         }
 
-        Usuario usuario = new Usuario();
-        usuario.setNome(dto.nome());
-        usuario.setCpf(dto.cpf());
-        usuario.setEmail(dto.email());
-        usuario.setSenha(dto.senha());
-        usuario.setTelefone(dto.telefone());
-        usuario.setTipoPerfil(TipoPerfil.valueOf(dto.tipoPerfil()));
-
-        Instrutor instrutor = new Instrutor();
-        instrutor.setCnh(dto.cnh());
-        instrutor.setUsuario(usuario);
+        Instrutor instrutor = instrutorMapper.toEntity(dto);
 
         return instrutorRepository.save(instrutor);
     }
@@ -50,12 +41,7 @@ public class InstrutorService {
     public List<InstrutorResponseDTO> listarTodos() {
         return instrutorRepository.findAll()
                 .stream()
-                .map(instrutor -> new InstrutorResponseDTO(
-                        instrutor.getId(),
-                        instrutor.getUsuario().getNome(),
-                        instrutor.getUsuario().getEmail(),
-                        instrutor.getCnh(),
-                        instrutor.getUsuario().getTipoPerfil().name()
-                )).toList();
+                .map(instrutorMapper::toResponseDTO)
+                .toList();
     }
 }

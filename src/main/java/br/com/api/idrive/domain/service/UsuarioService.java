@@ -3,8 +3,8 @@ package br.com.api.idrive.domain.service;
 import br.com.api.idrive.domain.dto.UsuarioRegistroDTO;
 import br.com.api.idrive.domain.dto.UsuarioResponseDTO;
 import br.com.api.idrive.domain.model.Usuario;
-import br.com.api.idrive.domain.model.TipoPerfil;
 import br.com.api.idrive.domain.repository.UsuarioRepository;
+import br.com.api.idrive.mapper.UsuarioMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,9 +14,11 @@ import java.util.List;
 public class UsuarioService {
 
     private final UsuarioRepository userRepository;
+    private final UsuarioMapper usuarioMapper;
 
-    public UsuarioService(UsuarioRepository repository) {
+    public UsuarioService(UsuarioRepository repository, UsuarioMapper usuarioMapper) {
         this.userRepository = repository;
+        this.usuarioMapper = usuarioMapper;
     }
 
     @Transactional
@@ -28,13 +30,7 @@ public class UsuarioService {
             throw new IllegalArgumentException("Este CPF já está cadastrado.");
         }
 
-        Usuario usuario = new Usuario();
-        usuario.setNome(dto.nome());
-        usuario.setCpf(dto.cpf());
-        usuario.setEmail(dto.email());
-        usuario.setSenha(dto.senha()); // Futuramente mudar para senha criptografada
-        usuario.setTelefone(dto.telefone());
-        usuario.setTipoPerfil(TipoPerfil.valueOf(dto.tipoPerfil()));
+        Usuario usuario = usuarioMapper.toEntity(dto);
 
         return userRepository.save(usuario);
     }
@@ -42,12 +38,7 @@ public class UsuarioService {
     public List<UsuarioResponseDTO> listarTodos() {
         return userRepository.findAll()
                 .stream()
-                .map(usuario -> new UsuarioResponseDTO(
-                        usuario.getId(),
-                        usuario.getNome(),
-                        usuario.getEmail(),
-                        usuario.getTipoPerfil().name()
-                ))
+                .map(usuarioMapper::toResponseDTO)
                 .toList();
     }
 }
