@@ -23,13 +23,4 @@ public class Aluno {
     @JoinColumn(name = "usuario_id", referencedColumnName = "id", nullable = false)
     private Usuario usuario;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "aluno_instrutor",
-            joinColumns = @JoinColumn(name = "aluno_id"),
-            inverseJoinColumns = @JoinColumn(name = "instrutor_id") )
-    private List<Instrutor> instrutores = new ArrayList<>();
-
-    @OneToMany(mappedBy = "aluno")
-    private List<Aula> aulas = new ArrayList<>();
 }

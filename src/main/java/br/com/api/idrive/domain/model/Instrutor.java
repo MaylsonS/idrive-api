@@ -26,9 +26,6 @@ public class Instrutor {
     @Column(nullable = false, unique = true, length = 11)
     private String cnh;
 
-    @ManyToMany(mappedBy = "instrutores")
-    private List<Aluno> alunos = new ArrayList<>();
-
-    @OneToMany(mappedBy = "instrutor")
-    private List<Aula> aulas = new ArrayList<>();
+    @Column(nullable = false)
+    private Boolean is_verify = false;
 }
