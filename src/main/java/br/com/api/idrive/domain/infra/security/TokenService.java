@@ -25,8 +25,7 @@ public class TokenService {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.create()
                     .withIssuer("idrive")
-                    .withSubject(user.getNome())
-                    .withSubject(user.getNome())
+                    .withSubject(user.getEmail())
                     .withClaim("type", user.getTipoPerfil().name())
                     .withExpiresAt(genExpirationDate())
                     .sign(algorithm);
