@@ -5,6 +5,7 @@ import br.com.api.idrive.domain.dto.UsuarioResponseDTO;
 import br.com.api.idrive.domain.model.Usuario;
 import br.com.api.idrive.domain.repository.UsuarioRepository;
 import br.com.api.idrive.mapper.UsuarioMapper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,10 +16,12 @@ public class UsuarioService {
 
     private final UsuarioRepository userRepository;
     private final UsuarioMapper usuarioMapper;
+    private final PasswordEncoder passwordEncoder;
 
-    public UsuarioService(UsuarioRepository repository, UsuarioMapper usuarioMapper) {
+    public UsuarioService(UsuarioRepository repository, UsuarioMapper usuarioMapper, PasswordEncoder passwordEncoder) {
         this.userRepository = repository;
         this.usuarioMapper = usuarioMapper;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Transactional
@@ -31,6 +34,7 @@ public class UsuarioService {
         }
 
         Usuario usuario = usuarioMapper.toEntity(dto);
+        usuario.setSenha(passwordEncoder.encode(dto.senha()));
 
         return userRepository.save(usuario);
     }
