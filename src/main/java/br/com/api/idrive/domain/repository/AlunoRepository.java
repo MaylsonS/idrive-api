@@ -9,7 +9,7 @@ import java.util.Optional;
 @Repository
 public interface AlunoRepository extends JpaRepository<Aluno,Long> {
 
-    Optional<Aluno> findByCpf(String cpf);
+    Optional<Aluno> findByUsuarioCpf(String cpf);
 
-    Optional<Aluno> findByEmail(String email);
+    Optional<Aluno> findByUsuarioEmail(String email);
 }
