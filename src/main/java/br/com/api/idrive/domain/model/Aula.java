@@ -26,6 +26,9 @@ public class Aula {
     @Column(unique = false)
     Double valor;
 
+    @Column(length = 500)
+    private String descricao;
+
     @ManyToOne
     @JoinColumn(name = "aluno_id")
     private Aluno aluno;
