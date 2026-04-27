@@ -1,5 +1,4 @@
 package br.com.api.idrive.domain.infra.security;
-import br.com.api.idrive.domain.model.Usuario;
 import br.com.api.idrive.domain.repository.UsuarioRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

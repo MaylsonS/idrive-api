@@ -8,6 +8,6 @@ public record AulaResponseDTO(
         LocalDateTime inicio,
         LocalDateTime fim,
         Double valor,
-        String descricao, // <- Novo campo devolvido
+        String descricao,
         String nomeInstrutor
 ) {}
