@@ -1,7 +1,7 @@
 package br.com.api.idrive.mapper;
 
-import br.com.api.idrive.domain.dto.InstrutorRegistroDTO;
-import br.com.api.idrive.domain.dto.InstrutorResponseDTO;
+import br.com.api.idrive.domain.dto.Instrutor.InstrutorRegistroDTO;
+import br.com.api.idrive.domain.dto.Instrutor.InstrutorResponseDTO;
 import br.com.api.idrive.domain.model.Instrutor;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

@@ -1,7 +1,7 @@
 package br.com.api.idrive.mapper;
 
-import br.com.api.idrive.domain.dto.AlunoRegistroDTO;
-import br.com.api.idrive.domain.dto.AlunoResponseDTO;
+import br.com.api.idrive.domain.dto.Aluno.AlunoRegistroDTO;
+import br.com.api.idrive.domain.dto.Aluno.AlunoResponseDTO;
 import br.com.api.idrive.domain.model.Aluno;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

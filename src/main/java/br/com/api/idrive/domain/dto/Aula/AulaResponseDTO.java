@@ -1,4 +1,4 @@
-package br.com.api.idrive.domain.dto;
+package br.com.api.idrive.domain.dto.Aula;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

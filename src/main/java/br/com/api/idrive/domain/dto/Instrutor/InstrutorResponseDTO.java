@@ -1,4 +1,4 @@
-package br.com.api.idrive.domain.dto;
+package br.com.api.idrive.domain.dto.Instrutor;
 
 import java.util.UUID;
 

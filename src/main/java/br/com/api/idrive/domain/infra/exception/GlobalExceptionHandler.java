@@ -1,6 +1,6 @@
 package br.com.api.idrive.domain.infra.exception;
 
-import br.com.api.idrive.domain.dto.ErrorResponse;
+import br.com.api.idrive.domain.dto.error.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,8 +1,8 @@
 package br.com.api.idrive.controller;
 
-import br.com.api.idrive.domain.dto.InstrutorRegistroDTO;
-import br.com.api.idrive.domain.dto.InstrutorResponseDTO;
-import br.com.api.idrive.domain.service.InstrutorService;
+import br.com.api.idrive.domain.dto.Instrutor.InstrutorRegistroDTO;
+import br.com.api.idrive.domain.dto.Instrutor.InstrutorResponseDTO;
+import br.com.api.idrive.domain.service.InstrutorServiceImplement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +15,7 @@ import java.util.List;
 public class InstrutorController {
 
     @Autowired
-    private InstrutorService instrutorService;
+    private InstrutorServiceImplement instrutorService;
 
     @PostMapping("/register")
     public ResponseEntity<String> registrar(@RequestBody @Valid InstrutorRegistroDTO dto) {

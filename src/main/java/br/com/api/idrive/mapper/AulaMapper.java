@@ -1,7 +1,7 @@
 package br.com.api.idrive.mapper;
 
-import br.com.api.idrive.domain.dto.AulaRequestDTO;
-import br.com.api.idrive.domain.dto.AulaResponseDTO;
+import br.com.api.idrive.domain.dto.Aula.AulaRequestDTO;
+import br.com.api.idrive.domain.dto.Aula.AulaResponseDTO;
 import br.com.api.idrive.domain.model.Aula;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

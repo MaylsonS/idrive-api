@@ -1,4 +1,4 @@
-package br.com.api.idrive.domain.dto;
+package br.com.api.idrive.domain.dto.Aula;
 
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;

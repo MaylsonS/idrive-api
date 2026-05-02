@@ -1,12 +1,12 @@
 package br.com.api.idrive.controller;
 
-import br.com.api.idrive.domain.dto.LoginDTO;
-import br.com.api.idrive.domain.dto.TokenDTO;
-import br.com.api.idrive.domain.dto.UsuarioRegistroDTO;
-import br.com.api.idrive.domain.dto.UsuarioResponseDTO;
+import br.com.api.idrive.domain.dto.token.LoginDTO;
+import br.com.api.idrive.domain.dto.token.TokenDTO;
+import br.com.api.idrive.domain.dto.usuario.UsuarioRegistroDTO;
+import br.com.api.idrive.domain.dto.usuario.UsuarioResponseDTO;
 import br.com.api.idrive.domain.infra.security.TokenService;
 import br.com.api.idrive.domain.model.Usuario;
-import br.com.api.idrive.domain.service.UsuarioService;
+import br.com.api.idrive.domain.service.UsuarioServiceImplement;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,11 +19,11 @@ import java.util.List;
 @RequestMapping("/usuarios")
 public class UsuarioController {
 
-    private final UsuarioService userService;
+    private final UsuarioServiceImplement userService;
     private final AuthenticationManager authenticationManager;
     private final TokenService tokenService;
 
-    public UsuarioController(UsuarioService service, AuthenticationManager authenticationManager, TokenService tokenService) {
+    public UsuarioController(UsuarioServiceImplement service, AuthenticationManager authenticationManager, TokenService tokenService) {
         this.userService = service;
         this.authenticationManager = authenticationManager;
         this.tokenService = tokenService;
@@ -41,7 +41,7 @@ public class UsuarioController {
 
     @PostMapping("/register")
     public ResponseEntity<String> registrar(@RequestBody @Valid UsuarioRegistroDTO dto) {
-        userService.registrar(dto);
+        userService.registar(dto);
         return ResponseEntity.ok("Usuário cadastrado com sucesso!");
     }
 

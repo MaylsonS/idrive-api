@@ -1,4 +1,4 @@
-package br.com.api.idrive.domain.dto;
+package br.com.api.idrive.domain.dto.Aluno;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

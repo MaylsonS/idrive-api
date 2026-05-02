@@ -1,8 +1,8 @@
 package br.com.api.idrive.controller;
 
-import br.com.api.idrive.domain.dto.AulaRequestDTO;
-import br.com.api.idrive.domain.dto.AulaResponseDTO;
-import br.com.api.idrive.domain.service.AulaService;
+import br.com.api.idrive.domain.dto.Aula.AulaRequestDTO;
+import br.com.api.idrive.domain.dto.Aula.AulaResponseDTO;
+import br.com.api.idrive.domain.service.AulaServiceImplement;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/aulas")
 public class AulaController {
 
-    private final AulaService aulaService;
+    private final AulaServiceImplement aulaService;
 
-    public AulaController(AulaService aulaService) {
+    public AulaController(AulaServiceImplement aulaService) {
         this.aulaService = aulaService;
     }
 
