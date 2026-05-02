@@ -10,6 +10,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/aulas")
 public class AulaController {
@@ -20,14 +22,23 @@ public class AulaController {
         this.aulaService = aulaService;
     }
 
-    @PostMapping
-    @PreAuthorize("hasRole('INSTRUTOR')")
+    @PostMapping("/criar-anuncio")
+    @PreAuthorize("hasRole('INSTRUTOR', 'ALUNO')")
     public ResponseEntity<AulaResponseDTO> criarAula(@RequestBody @Valid AulaRequestDTO dto, Authentication authentication) {
 
         String emailInstrutorLogado = authentication.getName();
 
-        AulaResponseDTO response = aulaService.criarAula(dto, emailInstrutorLogado);
+        AulaResponseDTO response = aulaService.anuncioAula(dto, emailInstrutorLogado);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @GetMapping("/minhas-aulas")
+    @PreAuthorize("hasRole('INSTRUTOR', 'ALUNO')")
+    public ResponseEntity<List<AulaResponseDTO>> minhasAulas(Authentication authentication) {
+        String emailLogado = authentication.getName();
+        List<AulaResponseDTO> response = aulaService.listarAulas(emailLogado);
+        return ResponseEntity.ok(response);
+
     }
 }

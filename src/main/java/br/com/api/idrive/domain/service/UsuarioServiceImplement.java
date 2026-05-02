@@ -1,5 +1,7 @@
 package br.com.api.idrive.domain.service;
 
+import br.com.api.idrive.domain.dto.Aula.AulaRequestDTO;
+import br.com.api.idrive.domain.dto.Aula.AulaResponseDTO;
 import br.com.api.idrive.domain.dto.usuario.UsuarioRegistroDTO;
 import br.com.api.idrive.domain.dto.usuario.UsuarioResponseDTO;
 import br.com.api.idrive.domain.model.Usuario;
@@ -12,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-public class UsuarioServiceImplement implements UsuarioService {
+public class UsuarioServiceImplement implements UsuarioService{
 
     private final UsuarioRepository userRepository;
     private final UsuarioMapper usuarioMapper;
@@ -39,14 +41,5 @@ public class UsuarioServiceImplement implements UsuarioService {
 
         return userRepository.save(usuario);
     }
-
-    public List<UsuarioResponseDTO> listarTodos() {
-        return userRepository.findAll()
-                .stream()
-                .map(usuarioMapper::toResponseDTO)
-                .toList();
-    }
-
-
 
 }

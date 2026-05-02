@@ -43,10 +43,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // LISTA VIP DE ROTAS LIBERADAS:
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/usuarios/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/usuarios/register").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/aluno/register").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/instrutores/register").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)

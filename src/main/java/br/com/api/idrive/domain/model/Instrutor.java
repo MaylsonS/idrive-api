@@ -27,5 +27,5 @@ public class Instrutor {
     private String cnh;
 
     @Column(nullable = false)
-    private Boolean is_verify = false;
+    private Boolean isVerify = false;
 }

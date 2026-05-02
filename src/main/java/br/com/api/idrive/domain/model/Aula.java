@@ -18,13 +18,13 @@ public class Aula {
     private UUID id;
 
     @Column(nullable = false)
-    LocalDateTime inicio;
+    private LocalDateTime inicio;
 
     @Column(nullable = false)
-    LocalDateTime fim;
+    private LocalDateTime fim;
 
     @Column(unique = false)
-    Double valor;
+    private Double valor;
 
     @Column(length = 500)
     private String descricao;
