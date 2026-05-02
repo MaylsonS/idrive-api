@@ -29,6 +29,16 @@ public class Aula {
     @Column(length = 500)
     private String descricao;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private StatusAula status;
+
+    @Column(length = 50)
+    private String autor;
+
+    @Column(length = 50)
+    private String coAutor;
+
     @ManyToOne
     @JoinColumn(name = "aluno_id")
     private Aluno aluno;

@@ -2,10 +2,7 @@ package br.com.api.idrive.domain.service;
 
 import br.com.api.idrive.domain.dto.Aula.AulaRequestDTO;
 import br.com.api.idrive.domain.dto.Aula.AulaResponseDTO;
-import br.com.api.idrive.domain.model.Aluno;
-import br.com.api.idrive.domain.model.Aula;
-import br.com.api.idrive.domain.model.Instrutor;
-import br.com.api.idrive.domain.model.Usuario;
+import br.com.api.idrive.domain.model.*;
 import br.com.api.idrive.domain.repository.AlunoRepository;
 import br.com.api.idrive.domain.repository.AulaRepository;
 import br.com.api.idrive.domain.repository.InstrutorRepository;
@@ -47,11 +44,15 @@ public class AulaServiceImplement implements AulaService {
             Instrutor instrutor = instrutorRepository.findByUsuarioEmail(emailLogado)
                     .orElseThrow(() -> new IllegalArgumentException("Cadastro de Instrutor não encontrado."));
             aula.setInstrutor(instrutor);
+            aula.setAutor(instrutor.getUsuario().getNome());
+            aula.setStatus(StatusAula.ABERTA);
 
         } else if ("ALUNO".equals(usuario.getTipoPerfil().name())) {
             Aluno aluno = alunoRepository.findByUsuarioEmail(emailLogado)
                     .orElseThrow(() -> new IllegalArgumentException("Cadastro de Aluno não encontrado."));
             aula.setAluno(aluno);
+            aula.setAutor(aluno.getUsuario().getNome());
+            aula.setStatus(StatusAula.ABERTA);
         }
 
         Aula aulaSalva = aulaRepository.save(aula);

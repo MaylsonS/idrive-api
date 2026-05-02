@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -23,7 +22,7 @@ public class AulaController {
     }
 
     @PostMapping("/criar-anuncio")
-    @PreAuthorize("hasRole('INSTRUTOR', 'ALUNO')")
+    @PreAuthorize("hasAnyRole('INSTRUTOR', 'ALUNO')")
     public ResponseEntity<AulaResponseDTO> criarAula(@RequestBody @Valid AulaRequestDTO dto, Authentication authentication) {
 
         String emailInstrutorLogado = authentication.getName();
@@ -34,7 +33,7 @@ public class AulaController {
     }
 
     @GetMapping("/minhas-aulas")
-    @PreAuthorize("hasRole('INSTRUTOR', 'ALUNO')")
+    @PreAuthorize("hasAnyRole('INSTRUTOR', 'ALUNO')")
     public ResponseEntity<List<AulaResponseDTO>> minhasAulas(Authentication authentication) {
         String emailLogado = authentication.getName();
         List<AulaResponseDTO> response = aulaService.listarAulas(emailLogado);

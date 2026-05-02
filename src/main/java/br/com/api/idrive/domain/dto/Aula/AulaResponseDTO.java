@@ -9,5 +9,6 @@ public record AulaResponseDTO(
         LocalDateTime fim,
         Double valor,
         String descricao,
-        String nomeInstrutor
+        String autor,
+        String coAutor
 ) {}
