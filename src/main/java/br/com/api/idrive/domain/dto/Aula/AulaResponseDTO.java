@@ -1,5 +1,6 @@
 package br.com.api.idrive.domain.dto.Aula;
 
+import br.com.api.idrive.domain.model.StatusAula;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -10,5 +11,6 @@ public record AulaResponseDTO(
         Double valor,
         String descricao,
         String autor,
-        String coAutor
+        String coAutor,
+        StatusAula status
 ) {}

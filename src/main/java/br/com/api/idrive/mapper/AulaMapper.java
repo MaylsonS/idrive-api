@@ -9,7 +9,6 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface AulaMapper {
 
-    @Mapping(target = "nomeInstrutor", source = "instrutor.usuario.nome")
     AulaResponseDTO toResponseDTO(Aula aula);
 
     Aula toEntity(AulaRequestDTO dto);
