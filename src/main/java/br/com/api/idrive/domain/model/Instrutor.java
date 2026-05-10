@@ -28,4 +28,10 @@ public class Instrutor {
 
     @Column(nullable = false)
     private Boolean isVerify = false;
+
+    @Column(length = 500)
+    private String descricao;
+
+    @Column
+    private Double notaMedia;
 }

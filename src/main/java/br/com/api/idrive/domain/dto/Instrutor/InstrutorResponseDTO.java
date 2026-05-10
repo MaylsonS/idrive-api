@@ -7,5 +7,8 @@ public record InstrutorResponseDTO(
        String nome,
        String email,
        String cnh,
-       String tipoPerfil
+       String tipoPerfil,
+       String descricao,
+       Double notaMedia
+
 ) {}

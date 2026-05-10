@@ -23,4 +23,7 @@ public class Aluno {
     @JoinColumn(name = "usuario_id", referencedColumnName = "id", nullable = false)
     private Usuario usuario;
 
+    @Column
+    private Double notaMedia;
+
 }
