@@ -1,6 +1,7 @@
 package br.com.api.idrive.domain.repository;
 
 import br.com.api.idrive.domain.model.Aula;
+import br.com.api.idrive.domain.model.StatusAula;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -18,4 +19,10 @@ public interface AulaRepository extends JpaRepository<Aula, UUID> {
 
     // O Spring faz o JOIN: Aula -> Aluno -> Usuario -> Email automaticamente
     List<Aula> findByAlunoUsuarioEmail(String email);
+
+    // Aluno vê → anúncios criados por instrutores (instrutor não nulo) com status ABERTA
+    List<Aula> findByInstrutorIsNotNullAndStatus(StatusAula status);
+
+    // Instrutor vê → anúncios criados por alunos (aluno não nulo) com status ABERTA
+    List<Aula> findByAlunoIsNotNullAndStatus(StatusAula status);
 }

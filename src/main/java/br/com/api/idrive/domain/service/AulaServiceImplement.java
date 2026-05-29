@@ -78,4 +78,23 @@ public class AulaServiceImplement implements AulaService {
                 .map(aulaMapper::toResponseDTO)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<AulaResponseDTO> listarAnunciosPublicos(String emailLogado) {
+
+        Usuario usuario = usuarioRepository.findByEmail(emailLogado)
+                .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado."));
+
+        List<Aula> anuncios;
+
+        if ("ALUNO".equals(usuario.getTipoPerfil().name())) {
+            anuncios = aulaRepository.findByInstrutorIsNotNullAndStatus(StatusAula.ABERTA);
+        } else {
+            anuncios = aulaRepository.findByAlunoIsNotNullAndStatus(StatusAula.ABERTA);
+        }
+
+        return anuncios.stream()
+                .map(aulaMapper::toResponseDTO)
+                .collect(Collectors.toList());
+    }
 }

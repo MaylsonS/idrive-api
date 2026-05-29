@@ -8,4 +8,5 @@ import java.util.List;
 public interface AulaService {
     public AulaResponseDTO anuncioAula(AulaRequestDTO dto, String email);
     public List<AulaResponseDTO> listarAulas(String email);
+    List<AulaResponseDTO> listarAnunciosPublicos(String emailLogado);
 }

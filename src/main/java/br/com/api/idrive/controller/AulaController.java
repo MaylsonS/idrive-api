@@ -40,4 +40,14 @@ public class AulaController {
         return ResponseEntity.ok(response);
 
     }
+
+    @GetMapping ("/anuncios")
+    @PreAuthorize("hasAnyRole('INSTRUTOR', 'ALUNO')")
+    public ResponseEntity<List<AulaResponseDTO>> anunciosPublicos(Authentication authentication) {
+
+        String emailLogado = authentication.getName();
+        List<AulaResponseDTO> response = aulaService.listarAnunciosPublicos(emailLogado);
+        return ResponseEntity.ok(response);
+    }
+
 }
