@@ -26,7 +26,7 @@ public class TokenService {
             return JWT.create()
                     .withIssuer("idrive")
                     .withSubject(user.getEmail())
-                    .withClaim("type", user.getTipoPerfil().name())
+                    .withClaim("tipoPerfil", user.getTipoPerfil().name())
                     .withExpiresAt(genExpirationDate())
                     .sign(algorithm);
         } catch (JWTCreationException exception) {

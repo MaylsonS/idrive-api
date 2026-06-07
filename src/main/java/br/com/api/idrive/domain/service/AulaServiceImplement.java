@@ -146,10 +146,8 @@ public class AulaServiceImplement implements AulaService {
             throw new IllegalStateException("Só é possível editar anúncios ABERTOS.");
         }
 
-//        aula.setInicio(dto.inicio());
-//        aula.setFim(dto.fim());
-        aula.setInicio(java.time.LocalDateTime.parse(dto.inicio()));
-        aula.setFim(java.time.LocalDateTime.parse(dto.fim()));
+        aula.setInicio(dto.inicio());
+        aula.setFim(dto.fim());
         aula.setValor(dto.valor());
         aula.setDescricao(dto.descricao());
         Aula aulaAtualizada = aulaRepository.save(aula);
