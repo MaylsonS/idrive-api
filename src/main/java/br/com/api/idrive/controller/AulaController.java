@@ -10,6 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/aulas")
@@ -49,5 +50,31 @@ public class AulaController {
         List<AulaResponseDTO> response = aulaService.listarAnunciosPublicos(emailLogado);
         return ResponseEntity.ok(response);
     }
+
+
+    @PutMapping("/editar-anuncio/{id}")
+    @PreAuthorize("hasAnyRole('INSTRUTOR', 'ALUNO')")
+    public ResponseEntity<AulaResponseDTO> editarAnuncio(
+            @PathVariable UUID id,
+            @RequestBody @Valid AulaRequestDTO dto,
+            Authentication authentication) {
+
+        String emailLogado = authentication.getName();
+        AulaResponseDTO response = aulaService.editarAnuncio(id, dto, emailLogado);
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/excluir-anuncio/{id}")
+    @PreAuthorize("hasAnyRole('INSTRUTOR', 'ALUNO')")
+    public ResponseEntity<Void> excluirAnuncio(@PathVariable Long id, Authentication authentication) {
+
+        String emailLogado = authentication.getName();
+        // Passamos o ID e o email logado para garantir que a pessoa só exclua o que for dela
+        aulaService.excluirAnuncio(id, emailLogado);
+        return ResponseEntity.noContent().build(); // Retorna o status 204 No Content (padrão para exclusões bem-sucedidas)
+    }
+
+
+
 
 }

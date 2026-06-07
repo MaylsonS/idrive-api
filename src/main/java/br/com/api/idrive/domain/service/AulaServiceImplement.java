@@ -133,4 +133,42 @@ public class AulaServiceImplement implements AulaService {
                 .map(this::toResponseDTO)
                 .collect(Collectors.toList());
     }
+
+
+    @Transactional
+    public AulaResponseDTO editarAnuncio(UUID id, AulaRequestDTO dto, String emailLogado) {
+        Aula aula = aulaRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Anúncio de aula não encontrado com o ID fornecido."));
+
+        validarDonoDoAnuncio(aula, emailLogado);
+        aula.setInicio(dto.inicio());
+        aula.setFim(dto.fim());
+        aula.setValor(dto.valor());
+        aula.setDescricao(dto.descricao());
+        Aula aulaAtualizada = aulaRepository.save(aula);
+        return aulaMapper.toResponseDTO(aulaAtualizada);
+    }
+
+    @Transactional
+    public void excluirAnuncio(UUID id, String emailLogado) {
+        Aula aula = aulaRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Anúncio de aula não encontrado com o ID fornecido."));
+        validarDonoDoAnuncio(aula, emailLogado);
+        aulaRepository.delete(aula);
+    }
+
+    private void validarDonoDoAnuncio(Aula aula, String emailLogado) {
+        String emailDonoAnuncio = null;
+
+        if (aula.getInstrutor() != null) {
+            emailDonoAnuncio = aula.getInstrutor().getUsuario().getEmail();
+        } else if (aula.getAluno() != null) {
+            emailDonoAnuncio = aula.getAluno().getUsuario().getEmail();
+        }
+
+        if (emailDonoAnuncio == null || !emailDonoAnuncio.equals(emailLogado)) {
+            throw new SecurityException("Acesso negado: Você não tem permissão para alterar ou excluir este anúncio.");
+        }
+    }
+
 }
