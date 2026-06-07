@@ -11,6 +11,7 @@ import br.com.api.idrive.mapper.AulaMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -72,6 +73,13 @@ public class AulaServiceImplement implements AulaService {
     @Override
     public AulaResponseDTO anuncioAula(AulaRequestDTO dto, String emailLogado) {
 
+        if (dto.inicio().isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("Não é possível criar um anúncio com data anterior a hoje.");
+        }
+        if (dto.fim().isBefore(dto.inicio())) {
+            throw new IllegalArgumentException("O horário de término deve ser após o horário de início.");
+        }
+
         Usuario usuario = usuarioRepository.findByEmail(emailLogado)
                 .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado com este e-mail"));
 
@@ -121,12 +129,16 @@ public class AulaServiceImplement implements AulaService {
         Usuario usuario = usuarioRepository.findByEmail(emailLogado)
                 .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado."));
 
+        LocalDateTime agora = LocalDateTime.now();
+
         List<Aula> anuncios;
 
         if ("ALUNO".equals(usuario.getTipoPerfil().name())) {
-            anuncios = aulaRepository.findByInstrutorIsNotNullAndStatus(StatusAula.ABERTA);
+            anuncios = aulaRepository
+                    .findByInstrutorIsNotNullAndStatusAndInicioAfter(StatusAula.ABERTA, agora);
         } else {
-            anuncios = aulaRepository.findByAlunoIsNotNullAndStatus(StatusAula.ABERTA);
+            anuncios = aulaRepository
+                    .findByAlunoIsNotNullAndStatusAndInicioAfter(StatusAula.ABERTA, agora);
         }
 
         return anuncios.stream()
@@ -178,6 +190,16 @@ public class AulaServiceImplement implements AulaService {
         if (emailDonoAnuncio == null || !emailDonoAnuncio.equals(emailLogado)) {
             throw new SecurityException("Acesso negado: Você não tem permissão para alterar ou excluir este anúncio.");
         }
+    }
+
+    @Transactional
+    public void cancelarAnunciosVencidos() {
+        List<Aula> vencidas = aulaRepository
+                .findByStatusAndInicioAfterIsFalse(StatusAula.ABERTA, LocalDateTime.now());
+
+        vencidas.forEach(aula -> aula.setStatus(StatusAula.CANCELADA));
+
+        aulaRepository.saveAll(vencidas);
     }
 
 }
