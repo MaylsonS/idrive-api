@@ -41,33 +41,31 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // LISTA VIP DE ROTAS LIBERADAS:
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/**").permitAll()
+                        // Libera o endpoint do WebSocket
+                        .requestMatchers("/ws/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
-
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        // Permite que o seu React (rodando na porta 5173) converse com o Spring
         configuration.setAllowedOrigins(List.of("http://localhost:5173"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        // Aplica essa regra para todas as rotas da API (/**)
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
 
     @Bean
-        public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
     }
 
