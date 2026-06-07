@@ -54,10 +54,7 @@ public class AulaController {
 
     @PutMapping("/editar-anuncio/{id}")
     @PreAuthorize("hasAnyRole('INSTRUTOR', 'ALUNO')")
-    public ResponseEntity<AulaResponseDTO> editarAnuncio(
-            @PathVariable UUID id,
-            @RequestBody @Valid AulaRequestDTO dto,
-            Authentication authentication) {
+    public ResponseEntity<AulaResponseDTO> editarAnuncio(@PathVariable UUID id, @RequestBody @Valid AulaRequestDTO dto, Authentication authentication) {
 
         String emailLogado = authentication.getName();
         AulaResponseDTO response = aulaService.editarAnuncio(id, dto, emailLogado);
@@ -66,12 +63,11 @@ public class AulaController {
 
     @DeleteMapping("/excluir-anuncio/{id}")
     @PreAuthorize("hasAnyRole('INSTRUTOR', 'ALUNO')")
-    public ResponseEntity<Void> excluirAnuncio(@PathVariable Long id, Authentication authentication) {
+    public ResponseEntity<Void> excluirAnuncio(@PathVariable UUID id, Authentication authentication) {
 
         String emailLogado = authentication.getName();
-        // Passamos o ID e o email logado para garantir que a pessoa só exclua o que for dela
         aulaService.excluirAnuncio(id, emailLogado);
-        return ResponseEntity.noContent().build(); // Retorna o status 204 No Content (padrão para exclusões bem-sucedidas)
+        return ResponseEntity.noContent().build();
     }
 
 

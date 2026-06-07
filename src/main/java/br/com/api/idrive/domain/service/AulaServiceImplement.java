@@ -141,12 +141,19 @@ public class AulaServiceImplement implements AulaService {
                 .orElseThrow(() -> new IllegalArgumentException("Anúncio de aula não encontrado com o ID fornecido."));
 
         validarDonoDoAnuncio(aula, emailLogado);
-        aula.setInicio(dto.inicio());
-        aula.setFim(dto.fim());
+
+        if (!StatusAula.ABERTA.equals(aula.getStatus())) {
+            throw new IllegalStateException("Só é possível editar anúncios ABERTOS.");
+        }
+
+//        aula.setInicio(dto.inicio());
+//        aula.setFim(dto.fim());
+        aula.setInicio(java.time.LocalDateTime.parse(dto.inicio()));
+        aula.setFim(java.time.LocalDateTime.parse(dto.fim()));
         aula.setValor(dto.valor());
         aula.setDescricao(dto.descricao());
         Aula aulaAtualizada = aulaRepository.save(aula);
-        return aulaMapper.toResponseDTO(aulaAtualizada);
+        return this.toResponseDTO(aulaAtualizada);
     }
 
     @Transactional
@@ -154,6 +161,10 @@ public class AulaServiceImplement implements AulaService {
         Aula aula = aulaRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Anúncio de aula não encontrado com o ID fornecido."));
         validarDonoDoAnuncio(aula, emailLogado);
+
+        if (!StatusAula.ABERTA.equals(aula.getStatus())) {
+            throw new IllegalStateException("Só é possível excluir anúncios ABERTOS. Caso necessário, cancele a aula.");
+        }
         aulaRepository.delete(aula);
     }
 
