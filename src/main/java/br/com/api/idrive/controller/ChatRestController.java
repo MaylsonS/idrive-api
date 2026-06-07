@@ -16,7 +16,7 @@ public class ChatRestController {
     @Autowired
     private MessageRepository repository;
 
-    @GetMapping("/{roomId/messages")
+    @GetMapping("/{roomId}/messages")
     public ResponseEntity<List<MessageEntity>> getChatHistory(@PathVariable String roomId) {
         List<MessageEntity> history = repository.findByRoomIdOrderByTimestampAsc(roomId);
         return ResponseEntity.ok(history);

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,6 +32,42 @@ public class AulaServiceImplement implements AulaService {
         this.aulaMapper = aulaMapper;
     }
 
+    private AulaResponseDTO toResponseDTO(Aula aula) {
+        UUID autorId    = null;
+        UUID coAutorId  = null;
+        String coAutorNome = aula.getCoAutor();
+
+        if (aula.getInstrutor() != null && aula.getAluno() != null) {
+            boolean instrutorCriou = aula.getAutor()
+                    .equals(aula.getInstrutor().getUsuario().getNome());
+            if (instrutorCriou) {
+                autorId    = aula.getInstrutor().getId();
+                coAutorId  = aula.getAluno().getId();
+                coAutorNome = aula.getAluno().getUsuario().getNome();
+            } else {
+                autorId    = aula.getAluno().getId();
+                coAutorId  = aula.getInstrutor().getId();
+                coAutorNome = aula.getInstrutor().getUsuario().getNome();
+            }
+        } else if (aula.getInstrutor() != null) {
+            autorId = aula.getInstrutor().getId();
+        } else if (aula.getAluno() != null) {
+            autorId = aula.getAluno().getId();
+        }
+
+        return new AulaResponseDTO(
+                aula.getId(),
+                aula.getInicio(),
+                aula.getFim(),
+                aula.getValor(),
+                aula.getDescricao(),
+                aula.getAutor(),
+                autorId,
+                coAutorNome,
+                coAutorId,
+                aula.getStatus()
+        );
+    }
     @Transactional
     @Override
     public AulaResponseDTO anuncioAula(AulaRequestDTO dto, String emailLogado) {
@@ -55,9 +92,8 @@ public class AulaServiceImplement implements AulaService {
             aula.setStatus(StatusAula.ABERTA);
         }
 
-        Aula aulaSalva = aulaRepository.save(aula);
+        return toResponseDTO(aulaRepository.save(aula));
 
-        return aulaMapper.toResponseDTO(aulaSalva);
     }
 
     @Override
@@ -75,7 +111,7 @@ public class AulaServiceImplement implements AulaService {
         }
 
         return minhasAulas.stream()
-                .map(aulaMapper::toResponseDTO)
+                .map(this::toResponseDTO)
                 .collect(Collectors.toList());
     }
 
@@ -94,7 +130,7 @@ public class AulaServiceImplement implements AulaService {
         }
 
         return anuncios.stream()
-                .map(aulaMapper::toResponseDTO)
+                .map(this::toResponseDTO)
                 .collect(Collectors.toList());
     }
 }

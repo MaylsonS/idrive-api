@@ -11,6 +11,8 @@ public record AulaResponseDTO(
         Double valor,
         String descricao,
         String autor,
+        UUID autorId,
         String coAutor,
+        UUID coAutorId,
         StatusAula status
 ) {}

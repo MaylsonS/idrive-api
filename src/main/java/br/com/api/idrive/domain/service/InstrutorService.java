@@ -7,6 +7,6 @@ import br.com.api.idrive.domain.model.Instrutor;
 import java.util.List;
 
 public interface InstrutorService {
-    public Instrutor registrar(InstrutorRegistroDTO dto);
-    public List<AulaResponseDTO> listarAulas();
+    Instrutor registrar(InstrutorRegistroDTO dto);
+    List<AulaResponseDTO> listarAulas();
 }
