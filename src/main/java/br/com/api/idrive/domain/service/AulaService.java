@@ -12,4 +12,5 @@ public interface AulaService {
     List<AulaResponseDTO> listarAnunciosPublicos(String emailLogado);
     AulaResponseDTO editarAnuncio(UUID id, AulaRequestDTO dto, String emailLogado);
     void excluirAnuncio(UUID id, String emailLogado);
+    List<AulaResponseDTO> listarAulasPorInstrutor(UUID instrutorId);
 }

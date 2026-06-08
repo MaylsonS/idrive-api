@@ -70,6 +70,13 @@ public class AulaController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/instrutor/{instrutorId}")
+    @PreAuthorize("hasAnyRole('INSTRUTOR', 'ALUNO')")
+    public ResponseEntity<List<AulaResponseDTO>> listarPorInstrutor(
+            @PathVariable UUID instrutorId) {
+        return ResponseEntity.ok(aulaService.listarAulasPorInstrutor(instrutorId));
+    }
+
 
 
 

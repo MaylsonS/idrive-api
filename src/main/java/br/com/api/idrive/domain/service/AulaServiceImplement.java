@@ -202,4 +202,19 @@ public class AulaServiceImplement implements AulaService {
         aulaRepository.saveAll(vencidas);
     }
 
+    @Override
+    public List<AulaResponseDTO> listarAulasPorInstrutor(UUID instrutorId) {
+        instrutorRepository.findById(instrutorId)
+                .orElseThrow(() -> new IllegalArgumentException("Instrutor não encontrado."));
+
+        return aulaRepository
+                .findByInstrutorIdAndStatusIn(
+                        instrutorId,
+                        List.of(StatusAula.ABERTA, StatusAula.ACEITA)
+                )
+                .stream()
+                .map(this::toResponseDTO)
+                .collect(Collectors.toList());
+    }
+
 }

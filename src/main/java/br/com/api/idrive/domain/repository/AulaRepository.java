@@ -18,6 +18,8 @@ public interface AulaRepository extends JpaRepository<Aula, UUID> {
 
     List<Aula> findByInstrutorId(UUID instrutorId);
 
+    List<Aula> findByInstrutorIdAndStatusIn(UUID instrutorId, List<StatusAula> statuses);
+
     List<Aula> findByInstrutorUsuarioEmail(String email);
 
     // O Spring faz o JOIN: Aula -> Aluno -> Usuario -> Email automaticamente
