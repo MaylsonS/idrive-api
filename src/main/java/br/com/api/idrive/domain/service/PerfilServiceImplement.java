@@ -38,17 +38,9 @@ public class PerfilServiceImplement implements PerfilService {
 
     public PerfilPublicoResponseDTO buscarPorId(UUID id) {
 
-        var instrutor = instrutorRepository.findById(id);
-        if (instrutor.isPresent()) {
-            return montarPerfil(instrutor.get().getUsuario());
-        }
-
-        var aluno = alunoRepository.findById(id);
-        if (aluno.isPresent()) {
-            return montarPerfil(aluno.get().getUsuario());
-        }
-
-        throw new IllegalArgumentException("Perfil não encontrado com o ID: " + id);
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Perfil não encontrado com o ID: " + id));
+        return montarPerfil(usuario);
     }
 
     private PerfilPublicoResponseDTO montarPerfil(Usuario usuario) {

@@ -38,26 +38,29 @@ public class AulaServiceImplement implements AulaService {
         UUID autorId    = null;
         UUID coAutorId  = null;
         String coAutorNome = aula.getCoAutor();
+        Double notaAutor = null;
 
+        // Verifica se ambos estão preenchidos para descobrir quem é o autor original
         if (aula.getInstrutor() != null && aula.getAluno() != null) {
             boolean instrutorCriou = aula.getAutor()
                     .equals(aula.getInstrutor().getUsuario().getNome());
             if (instrutorCriou) {
-
-                autorId    = aula.getInstrutor().getUsuario().getId();
-                coAutorId  = aula.getAluno().getUsuario().getId();
+                autorId    = aula.getInstrutor().getUsuario().getId(); // ✔ Pega o ID de Usuario
+                coAutorId  = aula.getAluno().getUsuario().getId();     // ✔ Pega o ID de Usuario
                 coAutorNome = aula.getAluno().getUsuario().getNome();
+                notaAutor  = aula.getInstrutor().getNotaMedia();
             } else {
-                autorId    = aula.getAluno().getUsuario().getId();
-                coAutorId  = aula.getInstrutor().getUsuario().getId();
+                autorId    = aula.getAluno().getUsuario().getId();     // ✔ Pega o ID de Usuario
+                coAutorId  = aula.getInstrutor().getUsuario().getId(); // ✔ Pega o ID de Usuario
                 coAutorNome = aula.getInstrutor().getUsuario().getNome();
+                notaAutor  = aula.getAluno().getNotaMedia();
             }
         } else if (aula.getInstrutor() != null) {
-           // autorId = aula.getInstrutor().getId();
-            autorId = aula.getInstrutor().getUsuario().getId();
+            autorId = aula.getInstrutor().getUsuario().getId(); // ✔ Garante ID global de autenticação
+            notaAutor = aula.getInstrutor().getNotaMedia();
         } else if (aula.getAluno() != null) {
-            //autorId = aula.getAluno().getId();
-            autorId = aula.getAluno().getUsuario().getId();
+            autorId = aula.getAluno().getUsuario().getId();     // ✔ Garante ID global de autenticação
+            notaAutor = aula.getAluno().getNotaMedia();
         }
 
         return new AulaResponseDTO(
@@ -71,6 +74,7 @@ public class AulaServiceImplement implements AulaService {
                 coAutorNome,
                 coAutorId,
                 aula.getStatus()
+
         );
     }
     @Transactional
@@ -222,7 +226,7 @@ public class AulaServiceImplement implements AulaService {
     }
 
     @Transactional
-    public AulaResponseDTO aceitarAula(UUID id, String emailLogado) {
+    public AulaResponseDTO aceitarAula(UUID id, UUID interessadoId, String emailLogado) {
         Aula aula = aulaRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Aula não encontrada."));
 
@@ -230,10 +234,24 @@ public class AulaServiceImplement implements AulaService {
             throw new IllegalStateException("Só é possível aceitar aulas com status ABERTA.");
         }
 
-        // Valida que o logado é o instrutor da aula
-        if (aula.getInstrutor() == null ||
-                !aula.getInstrutor().getUsuario().getEmail().equals(emailLogado)) {
-            throw new SecurityException("Sem permissão para aceitar esta aula.");
+        boolean isAutorInstrutor = aula.getInstrutor() != null && aula.getInstrutor().getUsuario().getEmail().equals(emailLogado);
+        boolean isAutorAluno = aula.getAluno() != null && aula.getAluno().getUsuario().getEmail().equals(emailLogado);
+
+        if (!isAutorInstrutor && !isAutorAluno) {
+            throw new SecurityException("Apenas o autor do anúncio pode aceitar solicitações.");
+        }
+
+        Usuario interessado = usuarioRepository.findById(interessadoId)
+                .orElseThrow(() -> new IllegalArgumentException("Usuário interessado não encontrado."));
+
+        if (isAutorInstrutor) {
+            Aluno alunoInteressado = alunoRepository.findByUsuarioEmail(interessado.getEmail())
+                    .orElseThrow(() -> new IllegalArgumentException("Perfil de aluno do interessado não encontrado."));
+            aula.setAluno(alunoInteressado);
+        } else {
+            Instrutor instrutorInteressado = instrutorRepository.findByUsuarioEmail(interessado.getEmail())
+                    .orElseThrow(() -> new IllegalArgumentException("Perfil de instrutor do interessado não encontrado."));
+            aula.setInstrutor(instrutorInteressado);
         }
 
         aula.setStatus(StatusAula.ACEITA);

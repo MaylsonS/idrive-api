@@ -50,4 +50,22 @@ public interface AulaRepository extends JpaRepository<Aula, UUID> {
             @Param("status") StatusAula status,
             @Param("agora") LocalDateTime agora
     );
+
+    @Query("""
+            SELECT a FROM Aula a
+            WHERE a.status = :status
+              AND (
+                (a.instrutor.usuario.id = :idA AND a.aluno.usuario.id   = :idB)
+             OR (a.instrutor.usuario.id = :idB AND a.aluno.usuario.id   = :idA)
+             OR (a.instrutor.usuario.id = :idA AND a.aluno IS NULL)
+             OR (a.instrutor.usuario.id = :idB AND a.aluno IS NULL)
+             OR (a.aluno.usuario.id     = :idA AND a.instrutor IS NULL)
+             OR (a.aluno.usuario.id     = :idB AND a.instrutor IS NULL)
+              )
+            ORDER BY a.inicio ASC
+            """)
+    List<Aula> findAulasAbertasEntreUsuarios(
+            @Param("idA") UUID idA,
+            @Param("idB") UUID idB,
+            @Param("status") StatusAula status);
 }
