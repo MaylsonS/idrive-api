@@ -8,6 +8,7 @@ import br.com.api.idrive.domain.repository.AulaRepository;
 import br.com.api.idrive.domain.repository.InstrutorRepository;
 import br.com.api.idrive.domain.repository.UsuarioRepository;
 import br.com.api.idrive.mapper.AulaMapper;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -215,6 +216,63 @@ public class AulaServiceImplement implements AulaService {
                 .stream()
                 .map(this::toResponseDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public AulaResponseDTO aceitarAula(UUID id, String emailLogado) {
+        Aula aula = aulaRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Aula não encontrada."));
+
+        if (!StatusAula.ABERTA.equals(aula.getStatus())) {
+            throw new IllegalStateException("Só é possível aceitar aulas com status ABERTA.");
+        }
+
+        // Valida que o logado é o instrutor da aula
+        if (aula.getInstrutor() == null ||
+                !aula.getInstrutor().getUsuario().getEmail().equals(emailLogado)) {
+            throw new SecurityException("Sem permissão para aceitar esta aula.");
+        }
+
+        aula.setStatus(StatusAula.ACEITA);
+        return toResponseDTO(aulaRepository.save(aula));
+    }
+
+    @Transactional
+    public AulaResponseDTO cancelarAula(UUID id, String emailLogado) {
+        Aula aula = aulaRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Aula não encontrada."));
+
+        if (StatusAula.CONCLUIDA.equals(aula.getStatus()) ||
+                StatusAula.CANCELADA.equals(aula.getStatus())) {
+            throw new IllegalStateException("Esta aula não pode ser cancelada.");
+        }
+
+        // Instrutor ou aluno dono da aula pode cancelar
+        boolean ehInstrutor = aula.getInstrutor() != null &&
+                aula.getInstrutor().getUsuario().getEmail().equals(emailLogado);
+        boolean ehAluno = aula.getAluno() != null &&
+                aula.getAluno().getUsuario().getEmail().equals(emailLogado);
+
+        if (!ehInstrutor && !ehAluno) {
+            throw new SecurityException("Sem permissão para cancelar esta aula.");
+        }
+
+        aula.setStatus(StatusAula.CANCELADA);
+        return toResponseDTO(aulaRepository.save(aula));
+    }
+
+    @Scheduled(fixedDelay = 60_000)
+    @Transactional
+    public void concluirAulasFinalizadas() {
+        LocalDateTime agora = LocalDateTime.now();
+
+        // ACEITA + fim passou → CONCLUIDA
+        List<Aula> paraConCluir = aulaRepository
+                .findByStatusAndFimAntesDe(StatusAula.ACEITA, agora);
+
+        paraConCluir.forEach(aula -> aula.setStatus(StatusAula.CONCLUIDA));
+        aulaRepository.saveAll(paraConCluir);
+
     }
 
 }

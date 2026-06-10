@@ -43,4 +43,11 @@ public interface AulaRepository extends JpaRepository<Aula, UUID> {
     List<Aula> findByStatusAndInicioAfterIsFalse(
             @Param("status") StatusAula status,
             @Param("agora") LocalDateTime agora);
+
+    // Aulas ACEITAS cujo fim já passou → devem virar CONCLUIDA
+    @Query("SELECT a FROM Aula a WHERE a.status = :status AND a.fim < :agora")
+    List<Aula> findByStatusAndFimAntesDe(
+            @Param("status") StatusAula status,
+            @Param("agora") LocalDateTime agora
+    );
 }

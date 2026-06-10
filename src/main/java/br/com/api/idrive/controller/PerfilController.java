@@ -1,7 +1,6 @@
 package br.com.api.idrive.controller;
 
 import br.com.api.idrive.domain.dto.perfil.PerfilPublicoResponseDTO;
-import br.com.api.idrive.domain.service.PerfilService;
 import br.com.api.idrive.domain.service.PerfilServiceImplement;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

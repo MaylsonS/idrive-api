@@ -77,7 +77,20 @@ public class AulaController {
         return ResponseEntity.ok(aulaService.listarAulasPorInstrutor(instrutorId));
     }
 
+    @PutMapping("/{id}/aceitar")
+    @PreAuthorize("hasRole('INSTRUTOR')")
+    public ResponseEntity<AulaResponseDTO> aceitarAula(
+            @PathVariable UUID id,
+            Authentication authentication) {
+        return ResponseEntity.ok(aulaService.aceitarAula(id, authentication.getName()));
+    }
 
-
+    @PutMapping("/{id}/cancelar")
+    @PreAuthorize("hasAnyRole('INSTRUTOR', 'ALUNO')")
+    public ResponseEntity<AulaResponseDTO> cancelarAula(
+            @PathVariable UUID id,
+            Authentication authentication) {
+        return ResponseEntity.ok(aulaService.cancelarAula(id, authentication.getName()));
+    }
 
 }
