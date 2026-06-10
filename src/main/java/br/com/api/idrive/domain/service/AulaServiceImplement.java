@@ -43,18 +43,21 @@ public class AulaServiceImplement implements AulaService {
             boolean instrutorCriou = aula.getAutor()
                     .equals(aula.getInstrutor().getUsuario().getNome());
             if (instrutorCriou) {
-                autorId    = aula.getInstrutor().getId();
-                coAutorId  = aula.getAluno().getId();
+
+                autorId    = aula.getInstrutor().getUsuario().getId();
+                coAutorId  = aula.getAluno().getUsuario().getId();
                 coAutorNome = aula.getAluno().getUsuario().getNome();
             } else {
-                autorId    = aula.getAluno().getId();
-                coAutorId  = aula.getInstrutor().getId();
+                autorId    = aula.getAluno().getUsuario().getId();
+                coAutorId  = aula.getInstrutor().getUsuario().getId();
                 coAutorNome = aula.getInstrutor().getUsuario().getNome();
             }
         } else if (aula.getInstrutor() != null) {
-            autorId = aula.getInstrutor().getId();
+           // autorId = aula.getInstrutor().getId();
+            autorId = aula.getInstrutor().getUsuario().getId();
         } else if (aula.getAluno() != null) {
-            autorId = aula.getAluno().getId();
+            //autorId = aula.getAluno().getId();
+            autorId = aula.getAluno().getUsuario().getId();
         }
 
         return new AulaResponseDTO(

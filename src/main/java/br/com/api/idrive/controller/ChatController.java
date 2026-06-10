@@ -17,23 +17,16 @@ public class ChatController {
     @Autowired
     private MessageRepository messageRepository;
 
-
     @MessageMapping("/chat/{roomId}/send")
     @SendTo("/topic/chat/{roomId}")
-    public ChatMessage handleMessage(@DestinationVariable String roomId, ChatMessage message) {
 
-        message.setTimestamp(LocalDateTime.now());
-        message.setRoomId(roomId);
-
+    public MessageEntity handleMessage(@DestinationVariable String roomId, ChatMessage message) {
         MessageEntity entity = new MessageEntity();
         entity.setRoomId(roomId);
         entity.setSender(message.getSender());
         entity.setContent(message.getContent());
-        entity.setTimestamp(message.getTimestamp());
+        entity.setTimestamp(LocalDateTime.now());
 
-        messageRepository.save(entity);
-
-        return message;
-
+        return messageRepository.save(entity);
     }
 }

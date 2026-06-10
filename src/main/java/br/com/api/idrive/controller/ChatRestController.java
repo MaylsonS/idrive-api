@@ -25,14 +25,38 @@ public class ChatRestController {
         this.usuarioRepository = usuarioRepository;
     }
 
-    // Histórico de mensagens de uma sala
     @GetMapping("/{roomId}/messages")
     public ResponseEntity<List<MessageEntity>> getChatHistory(@PathVariable String roomId) {
         List<MessageEntity> history = repository.findByRoomIdOrderByTimestampAsc(roomId);
         return ResponseEntity.ok(history);
     }
 
-    // Lista as salas (conversas) do usuário logado
+    // NOVO: retorna o nome do contato para uma sala específica.
+    // Usado pelo front quando a sala ainda não tem mensagens (estado não passa pelo /rooms).
+    @GetMapping("/{roomId}/info")
+    public ResponseEntity<Map<String, Object>> getRoomInfo(
+            @PathVariable String roomId,
+            Authentication authentication) {
+
+        String emailLogado = authentication.getName();
+        var usuarioLogado = usuarioRepository.findByEmail(emailLogado)
+                .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado."));
+
+        String userId = usuarioLogado.getId().toString();
+
+        String[] partes = roomId.split("_");
+        String outroId = Arrays.stream(partes)
+                .filter(p -> !p.equals(userId))
+                .findFirst()
+                .orElse("");
+
+        String nomeOutro = usuarioRepository.findById(UUID.fromString(outroId))
+                .map(u -> u.getNome())
+                .orElse("Usuário");
+
+        return ResponseEntity.ok(Map.of("name", nomeOutro));
+    }
+
     @GetMapping("/rooms")
     public ResponseEntity<List<Map<String, Object>>> getRooms(Authentication authentication) {
         String emailLogado = authentication.getName();
@@ -42,10 +66,8 @@ public class ChatRestController {
 
         String userId = usuarioLogado.getId().toString();
 
-        // Busca todas as mensagens onde o roomId contém o ID do usuário logado
         List<MessageEntity> todasMensagens = repository.findAll();
 
-        // Agrupa por roomId, filtrando só as salas do usuário
         Map<String, List<MessageEntity>> porSala = todasMensagens.stream()
                 .filter(m -> m.getRoomId().contains(userId))
                 .collect(Collectors.groupingBy(MessageEntity::getRoomId));
@@ -56,19 +78,16 @@ public class ChatRestController {
             String roomId = entry.getKey();
             List<MessageEntity> msgs = entry.getValue();
 
-            // Última mensagem da sala
             MessageEntity ultima = msgs.stream()
                     .max(Comparator.comparing(MessageEntity::getTimestamp))
                     .orElse(null);
 
-            // Descobre o ID do outro participante (roomId = idA_idB)
             String[] partes = roomId.split("_");
             String outroId = Arrays.stream(partes)
                     .filter(p -> !p.equals(userId))
                     .findFirst()
                     .orElse("");
 
-            // Busca nome do outro usuário
             String nomeOutro = usuarioRepository.findById(UUID.fromString(outroId))
                     .map(u -> u.getNome())
                     .orElse("Usuário");
@@ -80,14 +99,31 @@ public class ChatRestController {
             room.put("time", ultima != null
                     ? ultima.getTimestamp().format(DateTimeFormatter.ofPattern("HH:mm"))
                     : "");
-            room.put("online", false); // futuramente via WebSocket presence
+            room.put("online", false);
 
             rooms.add(room);
         }
 
-        // Ordena pela mensagem mais recente
         rooms.sort((a, b) -> ((String) b.get("time")).compareTo((String) a.get("time")));
-
         return ResponseEntity.ok(rooms);
+    }
+
+    @PostMapping("/rooms/iniciar")
+    public ResponseEntity<Map<String, String>> iniciarConversa(
+            @RequestParam UUID outroUsuarioId,
+            Authentication authentication) {
+
+        String emailLogado = authentication.getName();
+        var usuarioLogado = usuarioRepository.findByEmail(emailLogado)
+                .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado."));
+
+        String idA = usuarioLogado.getId().toString();
+        String idB = outroUsuarioId.toString();
+
+        String roomId = idA.compareTo(idB) < 0
+                ? idA + "_" + idB
+                : idB + "_" + idA;
+
+        return ResponseEntity.ok(Map.of("roomId", roomId));
     }
 }
