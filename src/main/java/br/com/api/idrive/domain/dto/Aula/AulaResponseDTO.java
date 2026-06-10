@@ -14,5 +14,7 @@ public record AulaResponseDTO(
         UUID autorId,
         String coAutor,
         UUID coAutorId,
-        StatusAula status
+        StatusAula status,
+        boolean avaliadoPeloAluno,
+        boolean avaliadoPeloInstrutor
 ) {}

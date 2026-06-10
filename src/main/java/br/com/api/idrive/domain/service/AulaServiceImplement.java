@@ -3,10 +3,7 @@ package br.com.api.idrive.domain.service;
 import br.com.api.idrive.domain.dto.Aula.AulaRequestDTO;
 import br.com.api.idrive.domain.dto.Aula.AulaResponseDTO;
 import br.com.api.idrive.domain.model.*;
-import br.com.api.idrive.domain.repository.AlunoRepository;
-import br.com.api.idrive.domain.repository.AulaRepository;
-import br.com.api.idrive.domain.repository.InstrutorRepository;
-import br.com.api.idrive.domain.repository.UsuarioRepository;
+import br.com.api.idrive.domain.repository.*;
 import br.com.api.idrive.mapper.AulaMapper;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -25,13 +22,18 @@ public class AulaServiceImplement implements AulaService {
     private final AlunoRepository alunoRepository;
     private final UsuarioRepository usuarioRepository;
     private final AulaMapper aulaMapper;
+    private final AvaliacaoInstrutorRepository avaliacaoInstrutorRepository;
+    private final AvaliacaoAlunoRepository avaliacaoAlunoRepository;
 
-    public AulaServiceImplement(AulaRepository aulaRepository, InstrutorRepository instrutorRepository, AlunoRepository alunoRepository, UsuarioRepository usuarioRepository, AulaMapper aulaMapper) {
+
+    public AulaServiceImplement(AulaRepository aulaRepository, InstrutorRepository instrutorRepository, AlunoRepository alunoRepository, UsuarioRepository usuarioRepository, AulaMapper aulaMapper,AvaliacaoInstrutorRepository avaliacaoInstrutorRepository,AvaliacaoAlunoRepository avaliacaoAlunoRepository) {
         this.aulaRepository = aulaRepository;
         this.instrutorRepository = instrutorRepository;
         this.alunoRepository = alunoRepository;
         this.usuarioRepository = usuarioRepository;
         this.aulaMapper = aulaMapper;
+        this.avaliacaoInstrutorRepository = avaliacaoInstrutorRepository;
+        this.avaliacaoAlunoRepository = avaliacaoAlunoRepository;
     }
 
     private AulaResponseDTO toResponseDTO(Aula aula) {
@@ -40,26 +42,25 @@ public class AulaServiceImplement implements AulaService {
         String coAutorNome = aula.getCoAutor();
         Double notaAutor = null;
 
-        // Verifica se ambos estão preenchidos para descobrir quem é o autor original
         if (aula.getInstrutor() != null && aula.getAluno() != null) {
             boolean instrutorCriou = aula.getAutor()
                     .equals(aula.getInstrutor().getUsuario().getNome());
             if (instrutorCriou) {
-                autorId    = aula.getInstrutor().getUsuario().getId(); // ✔ Pega o ID de Usuario
-                coAutorId  = aula.getAluno().getUsuario().getId();     // ✔ Pega o ID de Usuario
+                autorId    = aula.getInstrutor().getUsuario().getId();
+                coAutorId  = aula.getAluno().getUsuario().getId();
                 coAutorNome = aula.getAluno().getUsuario().getNome();
                 notaAutor  = aula.getInstrutor().getNotaMedia();
             } else {
-                autorId    = aula.getAluno().getUsuario().getId();     // ✔ Pega o ID de Usuario
-                coAutorId  = aula.getInstrutor().getUsuario().getId(); // ✔ Pega o ID de Usuario
+                autorId    = aula.getAluno().getUsuario().getId();
+                coAutorId  = aula.getInstrutor().getUsuario().getId();
                 coAutorNome = aula.getInstrutor().getUsuario().getNome();
                 notaAutor  = aula.getAluno().getNotaMedia();
             }
         } else if (aula.getInstrutor() != null) {
-            autorId = aula.getInstrutor().getUsuario().getId(); // ✔ Garante ID global de autenticação
+            autorId = aula.getInstrutor().getUsuario().getId();
             notaAutor = aula.getInstrutor().getNotaMedia();
         } else if (aula.getAluno() != null) {
-            autorId = aula.getAluno().getUsuario().getId();     // ✔ Garante ID global de autenticação
+            autorId = aula.getAluno().getUsuario().getId();
             notaAutor = aula.getAluno().getNotaMedia();
         }
 
@@ -73,8 +74,9 @@ public class AulaServiceImplement implements AulaService {
                 autorId,
                 coAutorNome,
                 coAutorId,
-                aula.getStatus()
-
+                aula.getStatus(),
+                avaliacaoInstrutorRepository.existsByAulaId(aula.getId()),
+                avaliacaoAlunoRepository.existsByAulaId(aula.getId())
         );
     }
     @Transactional
